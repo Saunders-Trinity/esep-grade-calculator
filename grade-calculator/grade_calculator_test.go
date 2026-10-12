@@ -85,3 +85,24 @@ func TestGradeTypeString(t *testing.T) {
 		t.Errorf("expected Exam.String() to return %q; got %q", "exam", actual)
 	}
 }
+
+func TestPassFailEvaluation(t *testing.T) {
+	tests := []struct {
+		grade    int
+		expected string
+	}{
+		{70, "Pass"},
+		{69, "Fail"},
+	}
+
+	for _, test := range tests {
+		calculator := NewGradeCalculator(PassFail)
+		calculator.AddGrade("assignment", test.grade, Assignment)
+		calculator.AddGrade("exam", test.grade, Exam)
+		calculator.AddGrade("essay", test.grade, Essay)
+
+		if actual := calculator.GetFinalGrade(); actual != test.expected {
+			t.Errorf("grade %d: expected %q; got %q", test.grade, test.expected, actual)
+		}
+	}
+}

@@ -49,3 +49,39 @@ func TestGetGradeF(t *testing.T) {
 		t.Errorf("Expected GetGrade to return '%s'; got '%s' instead", expected_value, actual_value)
 	}
 }
+
+func TestGetFinalGradeThresholds(t *testing.T) {
+	tests := []struct {
+		grade    int
+		expected string
+	}{
+		{90, "A"},
+		{80, "B"},
+		{70, "C"},
+		{60, "D"},
+		{59, "F"},
+	}
+
+	for _, test := range tests {
+		calculator := NewGradeCalculator()
+		calculator.AddGrade("assignment", test.grade, Assignment)
+		calculator.AddGrade("exam", test.grade, Exam)
+		calculator.AddGrade("essay", test.grade, Essay)
+
+		if actual := calculator.GetFinalGrade(); actual != test.expected {
+			t.Errorf("grade %d: expected %q; got %q", test.grade, test.expected, actual)
+		}
+	}
+}
+
+func TestGetFinalGradeWithoutGrades(t *testing.T) {
+	if actual := NewGradeCalculator().GetFinalGrade(); actual != "F" {
+		t.Errorf("expected empty calculator to return F; got %q", actual)
+	}
+}
+
+func TestGradeTypeString(t *testing.T) {
+	if actual := Exam.String(); actual != "exam" {
+		t.Errorf("expected Exam.String() to return %q; got %q", "exam", actual)
+	}
+}
